@@ -1,0 +1,243 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Roasted Cafe - Enjoy premium coffee and cozy vibes in Ottawa, KS. Open daily with fresh brews!">
+  <title>Roasted Cafe - Ottawa, KS</title>
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f5f0 url('https://www.transparenttextures.com/patterns/coffee-cup.png');
+      color: #3c2f2f;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    header {
+      height: 100vh;
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://github.com/T24085/RoastedCafe/blob/main/banner3.jpg?raw=true') no-repeat center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    header h1 {
+      font-size: 5rem;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      color: #fff;
+      text-shadow: 4px 4px 20px rgba(0, 0, 0, 0.9);
+      animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.06); }
+    }
+    nav {
+      background: linear-gradient(90deg, #d4a373, #c89666);
+      padding: 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 2.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    nav a:hover {
+      color: #f4e1d2;
+      text-decoration: underline;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 3px;
+      bottom: -6px;
+      left: 0;
+      background: #f4e1d2;
+      transition: width 0.3s ease;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+    .section {
+      max-width: 900px;
+      margin: 5rem auto;
+      padding: 2.5rem;
+      background: rgba(255, 250, 240, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border: 2px solid #e9d8c1;
+      animation: slideUp 1.5s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(70px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .section h2 {
+      color: #744210;
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .section h2::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 4px;
+      background: #d4a373;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .menu, .location {
+      background: linear-gradient(135deg, #fffaf4, #fefbf8);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      transition: all 0.4s ease;
+      border: 1px solid #e9d8c1;
+    }
+    .menu:hover, .location:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    .location iframe {
+      width: 100%;
+      height: 400px;
+      border: 3px solid #e9d8c1;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .contact {
+      text-align: center;
+    }
+    .contact a {
+      color: #744210;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .contact a:hover {
+      color: #d4a373;
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 3rem;
+      }
+      nav a {
+        display: block;
+        margin: 1rem 0;
+      }
+      .section {
+        margin: 3rem auto;
+        padding: 1.5rem;
+      }
+      .location iframe {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Roasted Cafe</h1>
+  </header>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#menu">Menu</a>
+    <a href="#location">Location</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="section" id="home">
+    <h2>Welcome to Roasted Cafe</h2>
+    <p>Indulge in the rich aroma of freshly roasted coffee at our cozy Ottawa, KS location. Perfect for a morning boost or an afternoon retreat!</p>
+  </div>
+  <div class="section menu" id="menu">
+    <h2>Our Menu</h2>
+    <p><strong>Hours:</strong></p>
+    <p>Saturday: 6:00 AM - 2:00 PM</p>
+    <p>Sunday: 7:00 AM - 1:00 PM</p>
+    <p>Monday & Tuesday: 7:00 AM - 2:00 PM</p>
+    <p>Wednesday: 6:00 AM - 2:00 PM</p>
+    <p>Thursday: 6:00 AM - 2:00 PM</p>
+    <p>Friday: 6:00 AM - 2:00 PM</p>
+    <p>Price Range: Varies | Open now (as of 02:53 PM CDT, Saturday, June 07, 2025)</p>
+    <p>Call us at <a href="tel:+17852411498">785-241-1498</a> to place an order or ask about our daily specials!</p>
+  </div>
+  <div class="section location" id="location">
+    <h2>Find Us</h2>
+    <p>123 E 2nd St, Ottawa, KS</p>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3159.123456789!2d-95.2678!3d38.6156!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87bf3f1234567890%3A0xabcdef1234567890!2s123+E+2nd+St%2C+Ottawa%2C+KS!5e0!3m2!1sen!2sus!4v1623456789!5m2!1sen!2sus" allowfullscreen></iframe>
+  </div>
+  <div class="section contact" id="contact">
+    <h2>Contact Us</h2>
+    <p>Phone: <a href="tel:+17852411498">785-241-1498</a></p>
+    <p>Email: Not listed; please call or visit for more info.</p>
+    <p>Stop by 123 E 2nd St or check local listings for updates!</p>
+  </div>
+  <script>
+    document.querySelectorAll('nav a').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
